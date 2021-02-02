@@ -8,6 +8,7 @@ using namespace std;
 class Dictionary {
 public:
 	Dictionary(string file);
+	Dictionary() = default;
 	string* GetValidWords() const {
 		return validWords;
 	}
