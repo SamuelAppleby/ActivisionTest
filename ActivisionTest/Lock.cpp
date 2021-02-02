@@ -2,6 +2,7 @@
 Lock::Lock(string file) {
 	numWheels = 0;
 	numChars = 0;
+	pos = 0;
 	ifstream infile(file);
 	if (!infile) {
 		cout << "unable to open file";
@@ -24,5 +25,25 @@ Lock::Lock(string file) {
 			wheels.push_back(make_pair(i - 2, charVec));
 		}
 		++i;
+	}
+	current.resize(numWheels);
+}
+
+void Lock::GenerateCombinations() {
+	while (!(pos == 0 && current.at(pos) == numChars)) {
+		while (current.at(pos) < numChars) {
+			if (pos != numWheels - 1) {
+				current.at(pos + 1) = 0;
+				++pos;
+			}
+			else {
+				combinations.push_back(current);
+				current.at(pos)++;
+			}
+		}
+		if (pos > 0) {
+			--pos;
+			current.at(pos)++;
+		}
 	}
 }

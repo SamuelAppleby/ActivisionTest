@@ -5,7 +5,6 @@
 #include "Dictionary.h"
 #include "Lock.h"
 using namespace std;
-set<string> foundWords;
 int BinarySearch(string arr[], string x, int n) {
     int l = 0;
     int r = n - 1;
@@ -21,59 +20,22 @@ int BinarySearch(string arr[], string x, int n) {
     return 0;
 }
 
-bool WordInDictionary(string word, Dictionary d) {
-    if (BinarySearch(d.GetValidWords(), word, d.GetNumWords()))
-        return true;
-    return false;
-}
-
-vector<vector<int>> GenerateCombinations(Lock l) {
-    vector<int> v(l.GetNumWheels());
-    vector<vector<int>> combination;
-    while (v.at(0) < l.GetNumChars()) {
-        v.at(1) = 0;
-        while (v.at(1) < l.GetNumChars()) {
-            v.at(2) = 0;
-            while (v.at(2) < l.GetNumChars()) {
-                v.at(3) = 0;
-                while (v.at(3) < l.GetNumChars()) {
-                    v.at(4) = 0;
-                    while (v.at(4) < l.GetNumChars()) {
-                        combination.push_back(v);
-                        v.at(4)++;
-                    }
-                    v.at(3)++;
-                }
-                v.at(2)++;
-            }
-            v.at(1)++;
-        }
-        v.at(0)++;
-    }
-    return combination;
-}
-
-void OutputWords(Dictionary d, Lock l) {
-    ofstream outFile;
-    outFile.open("output.txt");
-    if (!outFile) {
-        cout << "unable to open file";
-        return;
-    }
-
-    /* Get each case */
-    vector<vector<int>> combinations = GenerateCombinations(l);
-    std::cout << combinations.size();
-
-	/* Test each case */
+set<string> GenerateAndFindWords(Dictionary d, Lock l) {
+    /* Generate all combinations */
+    std::cout << "Generating Combinations..." << std::endl;
+    l.GenerateCombinations();
+    std::cout << l.GetCombinations().size() << std::endl;
+    /* Test each combination */
     string test;
-    for (auto& instance : combinations) {
+    set<string> foundWords;
+    std::cout << "Finding Words..." << std::endl;
+    for (auto& instance : l.GetCombinations()) {
         for (int i = 0; i < l.GetNumWheels() - 1; ++i) {
             test.clear();
             test += (l.GetWheels().at(i).second.at(instance.at(i)));
             test += (l.GetWheels().at(i + 1).second.at(instance.at(i + 1)));
             int inc = 2;
-            while (WordInDictionary(test, d)) {     // Keep going along the current combination to see if we can extend the word
+            while (BinarySearch(d.GetValidWords(), test, d.GetNumWords())) {     // Keep going along the current combination to see if we can extend the word
                 foundWords.insert(test);
                 if (i + inc < l.GetNumWheels()) {
                     test += (l.GetWheels().at(i + inc).second.at(instance.at(i + inc)));
@@ -84,16 +46,31 @@ void OutputWords(Dictionary d, Lock l) {
             }
         }
     }
+    return foundWords;
+}
 
-    for(auto& w : foundWords)
+void OutputWords(set<string> foundWords) {
+    ofstream outFile;
+    outFile.open("output.txt");
+    if (!outFile) {
+        cout << "unable to open file";
+        return;
+    }
+    for (auto& w : foundWords) {
+        std::cout << w << std::endl;
         outFile << w << "\n";
+    }
+    std::cout << "Words Found:" << foundWords.size() << std::endl;
     outFile << "Words Found:" << foundWords.size() << "\n";
     outFile.close();
 }
 
 int main() {
+    std::cout << "Creating Dictionary..." << std::endl;
     Dictionary dictionary("dictionary.txt");
+    std::cout << "Creating Lock..." << std::endl;
     Lock lock("wheels.txt");
-    OutputWords(dictionary, lock);
+    set<string> words = GenerateAndFindWords(dictionary, lock);
+    OutputWords(words);
     return 0;
 }
