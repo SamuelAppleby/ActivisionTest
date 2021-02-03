@@ -29,8 +29,8 @@ private:
 	int numWheels;
 	int numChars;
 	vector<pair<int, vector<char>>> wheels;
-	int pos;
 	set<string> foundWords;
 	Dictionary dictionary;
+	int bestLeft;
 };
 
