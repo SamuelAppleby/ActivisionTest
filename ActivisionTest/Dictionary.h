@@ -3,11 +3,11 @@
  *			 Dictionary Definition			 */
 #pragma once
 #include <string>
-#include <vector>
 #include <fstream>
 #include <sstream>  
 #include <iostream>  
 #include <algorithm>
+#include <set>
 using namespace std;
 class Dictionary {
 public:

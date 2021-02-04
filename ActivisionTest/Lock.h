@@ -3,14 +3,14 @@
  *			   Lock Definition			 */
 #pragma once
 #include "Dictionary.h" 
-#include <set>
+#include <vector>
 using namespace std;
 class Lock {
 public:
 	Lock(ifstream& file, Dictionary& d);
 
 	set<string> GenerateAndTestCombinations();
-	void TestCombination(vector<int> comb);
+	void TestCombinations(int** current, int size);
 	int BinarySearch(string arr[], string x, int n);
 
 	int GetNumWheels() const {
