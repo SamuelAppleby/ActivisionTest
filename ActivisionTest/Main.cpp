@@ -1,54 +1,56 @@
+/*		 Created By Samuel Buzz Appleby
+ *               03/02/2021
+ *			        Main			    */
 #include <iostream>
-#include <algorithm>
-#include <set>
 #include <fstream>
 #include "Dictionary.h"
 #include "Lock.h"
 using namespace std;
-int BinarySearch(string arr[], string x, int n) {
-    int l = 0;
-    int r = n - 1;
-    while (l <= r) {
-        int m = l + (r - l) / 2;
-        if (x == (arr[m]))
-            return m;
-        if (x > (arr[m]))
-            l = m + 1;
-        else
-            r = m - 1;
-    }
-    return 0;
-}
 
-set<string> GenerateAndFindWords(Dictionary d, Lock l) {
-    /* Generate all combinations */
-    std::cout << "Generating Combinations..." << std::endl;
-    l.GenerateCombinations();
-    return l.GetFoundWords();
-}
-
+/* Outputs all found words to console and output.txt */
 void OutputWords(set<string> foundWords) {
     ofstream outFile;
     outFile.open("output.txt");
     if (!outFile) {
-        cout << "unable to open file";
+        cout << "Cannot Create File";
         return;
     }
     for (auto& w : foundWords) {
-        std::cout << w << std::endl;
+        cout << w << endl;
         outFile << w << "\n";
     }
-    std::cout << "Words Found:" << foundWords.size() << std::endl;
+    cout << "Words Found:" << foundWords.size() << endl;
     outFile << "Words Found:" << foundWords.size() << "\n";
     outFile.close();
 }
 
+/* Takes in a file name and will return a file stream */
+ifstream LoadFile(string fileName) {
+    ifstream infile(fileName);
+    if (!infile) {
+        cout << fileName << " Does Not Exist";
+    }
+    return infile;
+}
+
 int main() {
-    std::cout << "Creating Dictionary..." << std::endl;
-    Dictionary dictionary("dictionary.txt");
-    std::cout << "Creating Lock..." << std::endl;
-    Lock lock("wheels.txt", dictionary);
-    set<string> words = GenerateAndFindWords(dictionary, lock);
-    OutputWords(words);
+    /* File loading */
+    cout << "Loading Files..." << endl;
+    ifstream dictionaryStream = LoadFile("dictionary.txt");
+    ifstream wheelStream = LoadFile("wheels.txt");
+    if (!dictionaryStream || !wheelStream)
+        return -1;
+
+    /* Create our objects */
+    cout << "Creating Dictionary..." << endl;
+    Dictionary dictionary(dictionaryStream);
+
+    cout << "Creating Lock..." << endl;
+    Lock lock(wheelStream, dictionary);
+
+    /* Output */
+    cout << "Finding Words..." << endl;
+    set<string> foundWords = lock.GenerateAndTestCombinations();
+    OutputWords(foundWords);
     return 0;
 }

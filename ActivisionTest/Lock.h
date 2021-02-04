@@ -1,36 +1,33 @@
+/*		 Created By Samuel Buzz Appleby
+ *               03/02/2021
+ *			   Lock Definition			 */
 #pragma once
-#include "Dictionary.h"
-#include <string>
-#include <vector>
-#include <fstream>
-#include <sstream>  
-#include <iostream>  
+#include "Dictionary.h" 
 #include <set>
 using namespace std;
 class Lock {
 public:
-	Lock(string file, Dictionary d);
-	void GenerateCombinations();
+	Lock(ifstream& file, Dictionary& d);
+
+	set<string> GenerateAndTestCombinations();
 	void TestCombination(vector<int> comb);
 	int BinarySearch(string arr[], string x, int n);
+
 	int GetNumWheels() const {
 		return numWheels;
 	}
 	int GetNumChars() const {
 		return numChars;
 	}
-	vector<pair<int, vector<char>>> GetWheels() const {
+	vector<pair<int, string>> GetWheels() const {
 		return wheels;
-	}
-	set<string> GetFoundWords() const {
-		return foundWords;
 	}
 private:
 	int numWheels;
 	int numChars;
-	vector<pair<int, vector<char>>> wheels;
+	vector<pair<int, string>> wheels;
 	set<string> foundWords;
-	Dictionary dictionary;
+	Dictionary* dictionary;
 	int bestLeft;
 };
 
