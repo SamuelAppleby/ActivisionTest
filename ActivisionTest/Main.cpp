@@ -1,5 +1,5 @@
 /*		 Created By Samuel Buzz Appleby
- *               03/02/2021
+ *               05/02/2021
  *			        Main			    */
 #include <iostream>
 #include <fstream>
@@ -29,6 +29,7 @@ ifstream LoadFile(string fileName) {
     ifstream infile(fileName);
     if (!infile) {
         cout << fileName << " Does Not Exist";
+        exit(EXIT_FAILURE);
     }
     return infile;
 }
@@ -38,17 +39,17 @@ int main() {
     cout << "Loading Files..." << endl;
     ifstream dictionaryStream = LoadFile("dictionary.txt");
     ifstream wheelStream = LoadFile("wheels.txt");
-    if (!dictionaryStream || !wheelStream)
-        return -1;
 
     /* Create our objects */
-    cout << "Creating Dictionary..." << endl;
+    cout << "Loading Dictionary..." << endl;
     Dictionary dictionary(dictionaryStream);
 
-    cout << "Creating Lock..." << endl;
+    cout << "Loading Lock..." << endl;
     Lock lock(wheelStream, dictionary);
 
     /* Output */
+
+    /* Set up multi-threading */
     cout << "Finding Words..." << endl;
     set<string> foundWords = lock.GenerateAndTestCombinations();
     OutputWords(foundWords);

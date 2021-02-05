@@ -1,13 +1,14 @@
 /*		 Created By Samuel Buzz Appleby
- *               03/02/2021
+ *               05/02/2021
  *			 Dictionary Definition			 */
 #pragma once
 #include <string>
 #include <fstream>
-#include <sstream>  
 #include <iostream>  
 #include <algorithm>
 #include <set>
+#include <regex>
+
 using namespace std;
 class Dictionary {
 public:
