@@ -52,7 +52,7 @@ Lock::Lock(ifstream& file, Dictionary& d) {
 	}
 }
 
-/* Given our number of wheels(N) and characters per wheel (M), we generate every possible combination, M ^ N */
+/* Given our number of wheels(N) and characters per wheel (M), we generate and test every possible combination, M ^ N */
 set<string> Lock::GenerateAndTestCombinations() {
 	int* current = new int[numWheels] {0};
 	int** combinations = new int*[chunkSize];		// Split the total combinations up into packet sizes
@@ -87,10 +87,16 @@ set<string> Lock::GenerateAndTestCombinations() {
 	}
 	if (count % chunkSize != 0)			// If there was a remainder chunk
 		FindWords(combinations, count);
+
+	delete[] current;
+	for (int i = 0; i < chunkSize; ++i) {
+		delete[] combinations[i];
+	}
+	delete[] combinations;
 	return foundWords;
 }
 
-/* User decides number of threads the program will use to search through the combinations */
+/* With our chunk of data and its size, we can multi-thread through the combinations */
 void Lock::FindWords(int** combs, int newSize) {
 	float rem = newSize % numThreads;
 	int size = newSize / numThreads;
@@ -134,8 +140,8 @@ int Lock::BinarySearch(string arr[], string x, int n) {
 	return 0;
 }
 
-/* Given our lock configuration, we see what words can be made */
-void Lock::TestCombinations(vector<vector <int>> combs, int size, int pos) {
+/* Given our sub set of combinations, we see what words can be made */
+void Lock::TestCombinations(vector<vector<int>> combs, int size, int pos) {
 	for (int i = 0; i < size; ++i) {
 		vector<int> current = combs[i];
 		string substr;
